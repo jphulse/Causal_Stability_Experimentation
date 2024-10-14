@@ -1,0 +1,45 @@
+{
+    "metadata_variables": [],
+    "variables": [
+        {
+            "always_observed": true,
+            "group_name": "x0",
+            "lower": -3.8515584468841553,
+            "name": "x0_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.6187140941619873
+        },
+        {
+            "always_observed": true,
+            "group_name": "x1",
+            "lower": -1.4909788370132446,
+            "name": "x1_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.4338531494140625
+        },
+        {
+            "always_observed": true,
+            "group_name": "x2",
+            "lower": -6.727383136749268,
+            "name": "x2_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.529266357421875
+        },
+        {
+            "always_observed": true,
+            "group_name": "x3",
+            "lower": -2.0695693492889404,
+            "name": "x3_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 2.458561897277832
+        }
+    ]
+}

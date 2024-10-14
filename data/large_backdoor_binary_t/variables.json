@@ -1,0 +1,95 @@
+{
+    "metadata_variables": [],
+    "variables": [
+        {
+            "always_observed": true,
+            "group_name": "x0",
+            "lower": -0.9990252256393433,
+            "name": "x0_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 5.515167236328125
+        },
+        {
+            "always_observed": true,
+            "group_name": "x1",
+            "lower": -2.6690778732299805,
+            "name": "x1_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 6.883259296417236
+        },
+        {
+            "always_observed": true,
+            "group_name": "x2",
+            "lower": -2.2091002464294434,
+            "name": "x2_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 4.678674697875977
+        },
+        {
+            "always_observed": true,
+            "group_name": "x3",
+            "lower": -2.6837899684906006,
+            "name": "x3_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 5.47080135345459
+        },
+        {
+            "always_observed": true,
+            "group_name": "x4",
+            "lower": -2.5708303451538086,
+            "name": "x4_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 4.235017776489258
+        },
+        {
+            "always_observed": true,
+            "group_name": "x5",
+            "lower": -2.627681016921997,
+            "name": "x5_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 4.996190547943115
+        },
+        {
+            "always_observed": true,
+            "group_name": "x6",
+            "lower": -2.6261825561523438,
+            "name": "x6_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.3169617652893066
+        },
+        {
+            "always_observed": true,
+            "group_name": "x7",
+            "lower": 0.0,
+            "name": "x7_0",
+            "query": true,
+            "target": false,
+            "type": "binary",
+            "upper": 1.0
+        },
+        {
+            "always_observed": true,
+            "group_name": "x8",
+            "lower": -4.131694793701172,
+            "name": "x8_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.7637503147125244
+        }
+    ]
+}

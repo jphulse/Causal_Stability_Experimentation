@@ -1,0 +1,35 @@
+{
+    "metadata_variables": [],
+    "variables": [
+        {
+            "always_observed": true,
+            "group_name": "x0",
+            "lower": 0,
+            "name": "x0_0",
+            "query": true,
+            "target": false,
+            "type": "categorical",
+            "upper": 2
+        },
+        {
+            "always_observed": true,
+            "group_name": "x1",
+            "lower": 0,
+            "name": "x1_0",
+            "query": true,
+            "target": false,
+            "type": "categorical",
+            "upper": 2
+        },
+        {
+            "always_observed": true,
+            "group_name": "x2",
+            "lower": 0,
+            "name": "x2_0",
+            "query": true,
+            "target": false,
+            "type": "binary",
+            "upper": 1
+        }
+    ]
+}

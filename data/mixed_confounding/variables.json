@@ -1,0 +1,125 @@
+{
+    "metadata_variables": [],
+    "variables": [
+        {
+            "always_observed": true,
+            "group_name": "x0",
+            "lower": 0,
+            "name": "x0_0",
+            "query": true,
+            "target": false,
+            "type": "binary",
+            "upper": 1
+        },
+        {
+            "always_observed": true,
+            "group_name": "x1",
+            "lower": -2.8258111476898193,
+            "name": "x1_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 2.718358278274536
+        },
+        {
+            "always_observed": true,
+            "group_name": "x2",
+            "lower": 0,
+            "name": "x2_0",
+            "query": true,
+            "target": false,
+            "type": "categorical",
+            "upper": 2
+        },
+        {
+            "always_observed": true,
+            "group_name": "x3",
+            "lower": -3.3836450576782227,
+            "name": "x3_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.406414031982422
+        },
+        {
+            "always_observed": true,
+            "group_name": "x4",
+            "lower": 0,
+            "name": "x4_0",
+            "query": true,
+            "target": false,
+            "type": "binary",
+            "upper": 1
+        },
+        {
+            "always_observed": true,
+            "group_name": "x5",
+            "lower": 0,
+            "name": "x5_0",
+            "query": true,
+            "target": false,
+            "type": "categorical",
+            "upper": 2
+        },
+        {
+            "always_observed": true,
+            "group_name": "x6",
+            "lower": -4.2055253982543945,
+            "name": "x6_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 5.2201128005981445
+        },
+        {
+            "always_observed": true,
+            "group_name": "x7",
+            "lower": 0,
+            "name": "x7_0",
+            "query": true,
+            "target": false,
+            "type": "categorical",
+            "upper": 2
+        },
+        {
+            "always_observed": true,
+            "group_name": "x8",
+            "lower": -3.3318610191345215,
+            "name": "x8_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.128448247909546
+        },
+        {
+            "always_observed": true,
+            "group_name": "x9",
+            "lower": -2.333916187286377,
+            "name": "x9_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 5.172029495239258
+        },
+        {
+            "always_observed": true,
+            "group_name": "x10",
+            "lower": -1.561461329460144,
+            "name": "x10_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 6.115912437438965
+        },
+        {
+            "always_observed": true,
+            "group_name": "x11",
+            "lower": -4.029644012451172,
+            "name": "x11_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.841226100921631
+        }
+    ]
+}

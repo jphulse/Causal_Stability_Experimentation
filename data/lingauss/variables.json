@@ -1,0 +1,25 @@
+{
+    "metadata_variables": [],
+    "variables": [
+        {
+            "always_observed": true,
+            "group_name": "x0",
+            "lower": -3.6930902004241943,
+            "name": "x0_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 2.9697015285491943
+        },
+        {
+            "always_observed": true,
+            "group_name": "x1",
+            "lower": -3.2499406337738037,
+            "name": "x1_0",
+            "query": true,
+            "target": false,
+            "type": "continuous",
+            "upper": 3.698697566986084
+        }
+    ]
+}
