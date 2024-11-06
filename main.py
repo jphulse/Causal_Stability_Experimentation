@@ -135,6 +135,33 @@ class DATA:
             exp = self.lin
         ac, ac_value = most_stable_alg(self)
         return ac == alg or abs(ac_value - exp) < (ac_value * .05)
+    
+    def getWorst(self):
+        exp = self.pc 
+        if exp < self.fci:
+            exp = self.fci
+        if exp < self.ges:
+            exp = self.ges
+        if exp < self.lin:
+            exp = self.lin
+        return exp
+    
+    def getAlgPerf(self, alg):
+        exp = self.pc
+        if alg ==2:
+            exp = self.fci
+        if alg == 3:
+            exp = self.ges
+        if alg == 4:
+            exp = self.lin
+        return exp
+    
+    def getImprovement(self, alg):
+        actual = self.getAlgPerf(alg)
+        worst = self.getWorst()
+        diff = actual - worst 
+        return diff / worst
+
 
         
 
@@ -151,6 +178,8 @@ class PROPERTY:
         self.close_real = 0 #how many we guessed close for REAL
         self.correct_real = 0 # how many we guessed correct for REAL
         self.total_real = 0 # how many total guesses made for REAL
+        self.imp = 0 # Average improvement for guesses made on synth
+        self.imp_real = 0 # Average improvement for guesses made on REAL
 
     # Preparation for the next cycle of the REAL experiments RQ3 and RQ4    
     def prep_for_second(self):
@@ -171,6 +200,24 @@ class PROPERTY:
                 print(self.correct_real / self.total_real, self.close_real / self.total_real, sep=',', file=f, end='\n' )
             finally:
                 portalocker.unlock(f)
+
+    def reportRQ5(self):
+        self.imp /= self.total
+        with open('results/RQ5.csv', 'a+') as f:
+            portalocker.lock(f, portalocker.LOCK_EX)
+            try:
+                print(self.imp )
+            finally:
+                portalocker.unlock(f)
+    def reportRQ6(self):
+        self.imp_real /= self.total_real
+        with open('results/RQ5.csv', 'a+') as f:
+            portalocker.lock(f, portalocker.LOCK_EX)
+            try:
+                print(self.imp_real )
+            finally:
+                portalocker.unlock(f)
+
 
     
 # class representing specific operations to be performed on synthetic data
@@ -514,6 +561,7 @@ def find_maximal_similar(data: DATA, grid: ndarray):
 def check_prediction(prop: PROPERTY, sub: DataFrame,  pred, approx_normal, potential_conf, rows, data:DATA, synth = True):
     grid = sub.to_numpy()
     actual = find_maximal_similar(data, grid)
+    improvement = data.getImprovement(pred)
     if actual == pred:
         if synth:
             prop.correct += 1
@@ -526,8 +574,10 @@ def check_prediction(prop: PROPERTY, sub: DataFrame,  pred, approx_normal, poten
             prop.close_real += 1
     if synth:
         prop.total += 1
+        prop.imp += improvement
     else:
         prop.total_real += 1
+        prop.imp_real += improvement
     prop.props.append((approx_normal, potential_conf, rows, actual))
 
 
