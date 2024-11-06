@@ -136,6 +136,7 @@ class DATA:
         ac, ac_value = most_stable_alg(self)
         return ac == alg or abs(ac_value - exp) < (ac_value * .05)
     
+    # Gets the performance in Jaccard index of the worst performing algorithm associated with this DATA
     def getWorst(self):
         exp = self.pc 
         if exp < self.fci:
@@ -146,6 +147,7 @@ class DATA:
             exp = self.lin
         return exp
     
+    # Gets the expected performance of the given alg, 1 = PC , 2 = FCI, 3 = GES, 4 = LiNGAM
     def getAlgPerf(self, alg):
         exp = self.pc
         if alg ==2:
@@ -206,7 +208,7 @@ class PROPERTY:
         with open('results/RQ5.csv', 'a+') as f:
             portalocker.lock(f, portalocker.LOCK_EX)
             try:
-                print(self.imp )
+                print(self.imp, sep=',', file=f, end='\n'  )
             finally:
                 portalocker.unlock(f)
     def reportRQ6(self):
@@ -214,7 +216,7 @@ class PROPERTY:
         with open('results/RQ5.csv', 'a+') as f:
             portalocker.lock(f, portalocker.LOCK_EX)
             try:
-                print(self.imp_real )
+                print(self.imp_real, sep=',', file=f, end='\n'  )
             finally:
                 portalocker.unlock(f)
 
@@ -685,4 +687,6 @@ real_results, prop = run_real_experiments(real_files, results, props)
 for data in real_results:
     data.reportRQ3()
 props.reportRQ4()
+props.reportRQ5()
+props.reportRQ6()
 
