@@ -88,7 +88,7 @@ class DATA:
         with open('results/RQ1.csv', 'a+') as f:
             portalocker.lock(f, portalocker.LOCK_EX)
             try:
-                print(self.file, self.count, self.pc, self.fci, self.ges, self.lin, sep=',', file=f, end='\n' )
+                print(self.pc, self.fci, self.ges, self.lin, sep=',', file=f, end='\n' )
             finally:
                 portalocker.unlock(f)
     
@@ -96,7 +96,7 @@ class DATA:
         with open('results/RQ3.csv', 'a+') as f:
             portalocker.lock(f, portalocker.LOCK_EX)
             try:
-                print(self.file, self.count, self.pc, self.fci, self.ges, self.lin, sep=',', file=f, end='\n' )
+                print(self.pc, self.fci, self.ges, self.lin, sep=',', file=f, end='\n' )
             finally:
                 portalocker.unlock(f)
     
