@@ -61,6 +61,8 @@ class DATA:
         self.prop_ges = None
         self.prop_lin = None
         self.potential_conf = False
+        self.actuals = []
+        self.worsts = []
 
     # we made a type of DATA so it is neither SYNTHETIC or REAL
     # here to support overriding methods in subclasses for compiler
@@ -99,7 +101,27 @@ class DATA:
                 print(self.pc, self.fci, self.ges, self.lin, sep=',', file=f, end='\n' )
             finally:
                 portalocker.unlock(f)
-    
+    def reportRQ7(self):
+        with open('results/RQ7.csv', 'a+') as f:
+             portalocker.lock(f, portalocker.LOCK_EX)
+             try:
+                for i, j in zip(self.actuals, self.worsts):
+                    print(i, j, sep='c', file=f,end='\n' )
+                    
+                    
+             finally:
+                portalocker.unlock(f)
+
+    def reportRQ8(self):
+        with open('results/RQ8.csv', 'a+') as f:
+             portalocker.lock(f, portalocker.LOCK_EX)
+             try:
+                for i, j in zip(self.actuals, self.worsts):
+                    print(i, j, sep='c', file=f,end='\n' )
+                    
+                    
+             finally:
+                portalocker.unlock(f)
     # Getter methods
     def getFile(self):
         return self.file
@@ -160,7 +182,9 @@ class DATA:
     
     def getImprovement(self, alg):
         actual = self.getAlgPerf(alg)
+        self.actuals.append(actual)
         worst = self.getWorst()
+        self.worsts.append(worst)
         diff = actual - worst 
         return diff / worst if worst > 0 else diff
 
@@ -682,10 +706,12 @@ for path in real_paths:
 results, props = run_experiments(synth_files)
 for data in results:
     data.reportRQ1()
+    data.reportRQ7()
 props.reportRQ2()
 real_results, prop = run_real_experiments(real_files, results, props)
 for data in real_results:
     data.reportRQ3()
+    data.reportRQ8()
 props.reportRQ4()
 props.reportRQ5()
 props.reportRQ6()
