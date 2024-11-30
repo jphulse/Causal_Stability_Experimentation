@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+
 import numpy as np
 
 
@@ -17,7 +19,7 @@ def analyze_rq1():
     plt.xticks(x_positions, df.columns, fontsize=12)
     plt.ylim(0, 1)  
     plt.ylabel('Jaccard index')
-    plt.title('Average stability of causal inference algorithms on synthetic datasets with small feature counts')
+    plt.title('')
     plt.savefig("results\\RQ1.png", format="png")
 
 
@@ -34,7 +36,7 @@ def analyze_rq2():
     plt.xticks(x_positions, df.columns, fontsize=12)
     plt.ylim(0, 1)  
     plt.ylabel('Percentage')
-    plt.title('Percentage of correct and within 5% of the correct algorithm for algorithm selection for synthetic data')
+    plt.title('')
     plt.savefig("results\\RQ2.png", format="png")
     plt.grid(axis='y', linestyle='--', alpha=0.7)
   
@@ -53,7 +55,7 @@ def analyze_rq3():
     plt.xticks(x_positions, df.columns, fontsize=12)
     plt.ylim(0, 1)  
     plt.ylabel('Jaccard index')
-    plt.title('Average stability of causal inference algorithms on real SE datasets with large feature counts')
+    plt.title('')
     plt.savefig("results\\RQ3.png", format="png")
 
 def analyze_rq4():
@@ -69,13 +71,29 @@ def analyze_rq4():
     plt.xticks(x_positions, df.columns, fontsize=12)
     plt.ylim(0, 1)  
     plt.ylabel('Percentage')
-    plt.title('Percentage of correct and within 5% of the correct algorithm for algorithm selection for real SE data')
+    plt.title('')
     plt.savefig("results\\RQ4.png", format="png")
     plt.grid(axis='y', linestyle='--', alpha=0.7)
 
-
+def analyze_5_6(csv_path='results/RQ5.csv', output_path='results/RQ5.png'):
+        
+    df = pd.read_csv(csv_path, header=None)
+    
+    
+    x = df.index
+    y = df[0].values  
+    plt.figure(figsize=(8, 6))
+    plt.ylim(0, 1)
+    plt.scatter(x, y, color='blue', marker='o')  
+    plt.title('')
+    plt.xlabel('Attempt')
+    plt.ylabel('Average improvement of treatment (percentage based)')
+    plt.savefig(output_path, bbox_inches='tight', dpi=300)
+    plt.close()  
 
 analyze_rq1()
 analyze_rq2()
 analyze_rq3()
 analyze_rq4()
+analyze_5_6()
+analyze_5_6('results/RQ6.csv', 'results/RQ6.png')
