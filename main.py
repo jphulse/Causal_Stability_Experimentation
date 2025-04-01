@@ -12,7 +12,9 @@
 
 # General imports for files or system operations
 import os 
-import re 
+import re
+import sys 
+import statistics
 # pip install portalocker
 import portalocker
 from typing import List
@@ -106,7 +108,7 @@ class DATA:
              portalocker.lock(f, portalocker.LOCK_EX)
              try:
                 for i, j in zip(self.actuals, self.worsts):
-                    print(i, j, sep='c', file=f,end='\n' )
+                    print(i, j, sep=',', file=f,end='\n' )
                     
                     
              finally:
@@ -117,7 +119,7 @@ class DATA:
              portalocker.lock(f, portalocker.LOCK_EX)
              try:
                 for i, j in zip(self.actuals, self.worsts):
-                    print(i, j, sep='c', file=f,end='\n' )
+                    print(i, j, sep=',', file=f,end='\n' )
                     
                     
              finally:
@@ -426,6 +428,7 @@ def makeGraphs(grid, data: REAL):
     data.lin_graphs.append(lin_matrix)
 
 
+
 # Performs the updated portion of the algorithm for RQ1 where we analyze results of all 
 # of the algorithms on their appropriate expected graph, the expected graph is calculated
 # to be the "average" graph of all of the generated pc_graphs and is a quick way to gauge 
@@ -690,11 +693,75 @@ def run_real_experiments(files, results: List[DATA], prop : PROPERTY, N = 20, p 
         exp4(data, prop)
 
     return results, prop
-    
+
+def genExpectedGraphs(data: REAL):
+    return generateExpectedGraph(data.pc_graphs), generateExpectedGraph(data.fci_graphs), generateExpectedGraph(data.ges_graphs), generateExpectedGraph(data.lin_graphs)
+
+def compareGraphs(t1, t2, dim):
+    return calculateJaccardIndex(t1[0], t2[0], dim), calculateJaccardIndex(t1[1], t2[1], dim), calculateJaccardIndex(t1[2], t2[2], dim), calculateJaccardIndex(t1[3], t2[3], dim)
+
+# Gets the jaccard values for all graphs in data made from the same generator
+# Returns a tuple of list of jaccard indexes for each graph tyoe
+# ([PC], [FCI], [GES], [LiNGAM])
+def longJacc(data: REAL, dim) -> tuple[List, List, List, List]:
+    results = ([],[],[],[])
+    for i in range(len(data.pc_graphs)):
+        for j in range(i + 1, len(data.pc_graphs)):
+            g1 = (data.pc_graphs[i], data.fci_graphs[i], data.ges_graphs[i], data.lin_graphs[i])
+            g2 = (data.pc_graphs[j], data.fci_graphs[j], data.ges_graphs[j], data.lin_graphs[j])
+            pc, fci, ges, lin = (compareGraphs(g1, g2, dim))
+            results[0].append(pc)
+            results[1].append(fci)
+            results[2].append(ges)
+            results[3].append(lin)
+           
+    return results
 
 
+
+# Performs the generative experiment meaning that we
+# are testing our RQ0, for the increase in stability of the
+# expected graph structure (we know this exists but we wish to quantify)
+# Returns ([PC], [FCI], [GES], [LiNGAM])
+def genEXP(df, file, N: int, p =.9) -> tuple[List, List, List, List]: 
+    exp = REAL(file)
+    for i in range(N):
+        data = REAL(file)
+        for i in range(N):
+            sub = df.sample(frac=p)
+            grid = sub.to_numpy()
+            p.array(grid, dtype=np.float64)
+            makeGraphs(grid, data)
+        dim = grid.shape[1]
+        expected = genExpectedGraphs(data)
+        exp.pc_graphs.append(expected[0])
+        exp.fci_graphs.append(expected[1])
+        exp.ges_graphs.append(expected[2])
+        exp.lin_graphs.append(expected[3])
+    return longJacc(exp, dim)
         
+            
 
+
+# Performs RQ0 for a specific file
+def runRQ0(file, N=10, p=.9):
+    df = fix_normal_data(pd.read_csv(file))
+    pc, fci, ges, lin = genEXP(df, file, N, p)
+    return (statistics.mean(pc), statistics.stdev(pc)), (statistics.mean(fci), statistics.stdev(fci)), (statistics.mean(ges), statistics.stdev(ges)), (statistics.mean(lin), statistics.stdev(lin))
+        
+def reportRQ0(tup, fileName):
+    file = "results\\RQ0\\" + fileName[fileName.indexOf('\\') + 1:]
+    
+    with open(file, 'a+') as f:
+            portalocker.lock(f, portalocker.LOCK_EX)
+            try:
+                print(tup[0][0], tup[0][1], tup[1][0], tup[1][1], tup[2][0], tup[2][1], tup[3][0], tup[3][1], sep=',', file=f, end='\n'  )
+            finally:
+                portalocker.unlock(f)
+
+
+# SCRIPT PORTION
+print(initial_path,)
 synth_files = get_files(initial_path, synethetic_pattern)
 real_files = []
 for path in real_paths:
@@ -702,17 +769,23 @@ for path in real_paths:
 
 # for file in real_files:
 #     test_normal_data(file)
+print(synth_files, flush=True)
 
-results, props = run_experiments(synth_files)
-for data in results:
-    data.reportRQ1()
-    data.reportRQ7()
-props.reportRQ2()
-real_results, prop = run_real_experiments(real_files, results, props)
-for data in real_results:
-    data.reportRQ3()
-    data.reportRQ8()
-props.reportRQ4()
-props.reportRQ5()
-props.reportRQ6()
+if sys.argv[1] == "-A":
+    print("ALT MODE")
+    for file in real_files:
+        runRQ0(file)
+else:
+    results, props = run_experiments(synth_files)
+    for data in results:
+        data.reportRQ1()
+        data.reportRQ7()
+    props.reportRQ2()
+    real_results, prop = run_real_experiments(real_files, results, props)
+    for data in real_results:
+        data.reportRQ3()
+        data.reportRQ8()
+    props.reportRQ4()
+    props.reportRQ5()
+    props.reportRQ6()
 
