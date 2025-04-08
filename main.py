@@ -275,7 +275,8 @@ class REAL(DATA):
 # however I would suggest making a new folder data\\<my_new_folder> and placing them within that folder as *.csv files
 # then add the path of that directory with the same syntax as the ones in the real_paths list manually
 initial_path = 'data\\'
-real_paths = ['data\\ant', 'data\\ivy', 'data\\camel', 'data\\synapse', 'data\\xerces']
+proc_paths = ['data\\Config', 'data\\Process']
+real_paths = [ 'data\\ant', 'data\\ivy', 'data\\camel', 'data\\synapse', 'data\\xerces']
 real_pattern = r'.*\.csv$'
 synethetic_pattern = r'train.csv$'
 
@@ -694,8 +695,8 @@ def run_real_experiments(files, results: List[DATA], prop : PROPERTY, N = 20, p 
 
     return results, prop
 
-def genExpectedGraphs(data: REAL):
-    return generateExpectedGraph(data.pc_graphs), generateExpectedGraph(data.fci_graphs), generateExpectedGraph(data.ges_graphs), generateExpectedGraph(data.lin_graphs)
+def genExpectedGraphs(data: REAL, dim):
+    return generateExpectedGraph(data.pc_graphs, dim), generateExpectedGraph(data.fci_graphs, dim), generateExpectedGraph(data.ges_graphs, dim), generateExpectedGraph(data.lin_graphs, dim)
 
 def compareGraphs(t1, t2, dim):
     return calculateJaccardIndex(t1[0], t2[0], dim), calculateJaccardIndex(t1[1], t2[1], dim), calculateJaccardIndex(t1[2], t2[2], dim), calculateJaccardIndex(t1[3], t2[3], dim)
@@ -730,10 +731,10 @@ def genEXP(df, file, N: int, p =.9) -> tuple[List, List, List, List]:
         for i in range(N):
             sub = df.sample(frac=p)
             grid = sub.to_numpy()
-            p.array(grid, dtype=np.float64)
+            np.array(grid, dtype=np.float64)
             makeGraphs(grid, data)
         dim = grid.shape[1]
-        expected = genExpectedGraphs(data)
+        expected = genExpectedGraphs(data, dim)
         exp.pc_graphs.append(expected[0])
         exp.fci_graphs.append(expected[1])
         exp.ges_graphs.append(expected[2])
@@ -744,13 +745,15 @@ def genEXP(df, file, N: int, p =.9) -> tuple[List, List, List, List]:
 
 
 # Performs RQ0 for a specific file
-def runRQ0(file, N=10, p=.9):
+def runRQ0(file, N=10, p=.9, compress=False):
     df = fix_normal_data(pd.read_csv(file))
+    if compress:
+        df = df.sample(100)
     pc, fci, ges, lin = genEXP(df, file, N, p)
     return (statistics.mean(pc), statistics.stdev(pc)), (statistics.mean(fci), statistics.stdev(fci)), (statistics.mean(ges), statistics.stdev(ges)), (statistics.mean(lin), statistics.stdev(lin))
         
 def reportRQ0(tup, fileName):
-    file = "results\\RQ0\\" + fileName[fileName.indexOf('\\') + 1:]
+    file = "results\\RQ0\\" + fileName[fileName.find('\\') + 1:]
     
     with open(file, 'a+') as f:
             portalocker.lock(f, portalocker.LOCK_EX)
@@ -761,20 +764,25 @@ def reportRQ0(tup, fileName):
 
 
 # SCRIPT PORTION
-print(initial_path,)
 synth_files = get_files(initial_path, synethetic_pattern)
 real_files = []
+process = []
+for path in proc_paths:
+    proccess = get_files(path, real_pattern, found=process)
+
+
 for path in real_paths:
     get_files(path, real_pattern, real_files)
 
 # for file in real_files:
 #     test_normal_data(file)
-print(synth_files, flush=True)
 
 if sys.argv[1] == "-A":
-    print("ALT MODE")
+    print("ALT MODE", flush=True)
+    for file in proccess:
+        reportRQ0(runRQ0(file, compress=True), file)
     for file in real_files:
-        runRQ0(file)
+        reportRQ0(runRQ0(file), file)
 else:
     results, props = run_experiments(synth_files)
     for data in results:
