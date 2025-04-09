@@ -65,6 +65,7 @@ class DATA:
         self.potential_conf = False
         self.actuals = []
         self.worsts = []
+        self.dim = 0
 
     # we made a type of DATA so it is neither SYNTHETIC or REAL
     # here to support overriding methods in subclasses for compiler
@@ -752,8 +753,8 @@ def runRQ0(file, N=10, p=.9, compress=False):
     pc, fci, ges, lin = genEXP(df, file, N, p)
     return (statistics.mean(pc), statistics.stdev(pc)), (statistics.mean(fci), statistics.stdev(fci)), (statistics.mean(ges), statistics.stdev(ges)), (statistics.mean(lin), statistics.stdev(lin))
         
-def reportRQ0(tup, fileName):
-    file = "results\\RQ0\\" + fileName[fileName.find('\\') + 1:]
+def reportRQ0(tup, fileName, preamble="results\\RQ0\\"):
+    file = preamble + fileName[fileName.find('\\') + 1:]
     
     with open(file, 'a+') as f:
             portalocker.lock(f, portalocker.LOCK_EX)
@@ -762,6 +763,50 @@ def reportRQ0(tup, fileName):
             finally:
                 portalocker.unlock(f)
 
+def fillData(file, N=10, p=.9) -> REAL:
+    df = fix_normal_data(pd.read_csv(file))
+    data = REAL(file)
+    for i in range(N):
+        sub = df.sample(frac=p)
+        grid = sub.to_numpy()
+        np.array(grid, dtype=np.float64)
+        makeGraphs(grid, data)
+    data.dim = grid.shape[1]
+    return data
+
+
+def runAltVersion(projects:List[List[str]]) -> None:
+    for project in projects:
+        exp = REAL(project)
+        for file in project:
+            data = fillData(file)
+            expected = genExpectedGraphs(data, data.dim)
+            exp.pc_graphs.append(expected[0])
+            exp.fci_graphs.append(expected[1])
+            exp.ges_graphs.append(expected[2])
+            exp.lin_graphs.append(expected[3])
+            if exp.dim < 1:
+                exp.dim = data.dim
+        pc, fci, ges, lin = longJacc(exp, exp.dim)
+        tup = (statistics.mean(pc), statistics.stdev(pc)), (statistics.mean(fci), statistics.stdev(fci)), (statistics.mean(ges), statistics.stdev(ges)), (statistics.mean(lin), statistics.stdev(lin))
+        fileName = "\\Version\\" + project[-1][project[-1].index('\\') + 1:]
+        reportRQ0(tup, fileName)
+
+def runAltProject(files:List[str]):
+    exp = REAL("")
+    for file in files:
+        data = fillData(file)
+        expected = genExpectedGraphs(data, data.dim)
+        exp.pc_graphs.append(expected[0])
+        exp.fci_graphs.append(expected[1])
+        exp.ges_graphs.append(expected[2])
+        exp.lin_graphs.append(expected[3])
+        if exp.dim < 1:
+            exp.dim = data.dim
+    pc, fci, ges, lin = longJacc(exp, exp.dim)
+    return (statistics.mean(pc), statistics.stdev(pc)), (statistics.mean(fci), statistics.stdev(fci)), (statistics.mean(ges), statistics.stdev(ges)), (statistics.mean(lin), statistics.stdev(lin))
+    
+    
 
 # SCRIPT PORTION
 synth_files = get_files(initial_path, synethetic_pattern)
@@ -777,12 +822,27 @@ for path in real_paths:
 # for file in real_files:
 #     test_normal_data(file)
 
-if sys.argv[1] == "-A":
+if "-A" in sys.argv or "-a" in sys.argv:
     print("ALT MODE", flush=True)
-    for file in proccess:
-        reportRQ0(runRQ0(file, compress=True), file)
-    for file in real_files:
-        reportRQ0(runRQ0(file), file)
+    if "-S" in sys.argv or "-s" in sys.argv:
+        print("Alt subsample experiment", flush=True)
+        for file in proccess:
+            reportRQ0(runRQ0(file, compress=True), file)
+        for file in real_files:
+            reportRQ0(runRQ0(file), file)
+    if "-P" in sys.argv or "-p" in sys.argv:
+        # do something
+        print("Alt cross-project experiment", flush=True)
+        files = []
+        for path in real_paths:
+            files.append(get_files(path, real_pattern, found=[])[-1])
+        reportRQ0(runAltProject(files), "\\alt_project")
+    if "-V" in sys.argv or "-v" in sys.argv:
+        print("Alt version experiment", flush=True)
+        projects = []
+        for path in real_paths:
+            projects.append(get_files(path, real_pattern, found=[]))
+        runAltVersion(projects)
 else:
     results, props = run_experiments(synth_files)
     for data in results:
